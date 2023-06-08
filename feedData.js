@@ -61,7 +61,8 @@ async function handleWebhook(req, res) {
     // STEP THREE: SENDING DATA TO VERTAFORE
     //const response = await sendToPlRater(webhookData);
 
-    console.log("Response from Vertafore:", response.data);
+    //console.log("Response from Vertafore:", response.data);
+    
     res.status(200).json(response.data);
   } catch (error) {
     console.error("Error processing webhook:", error);
@@ -71,17 +72,17 @@ async function handleWebhook(req, res) {
 
 // STEP THREE: SENDING DATA TO VERTAFORE
 
-async function sendToPlRater(webhookData) {
-  const productId = "";
-  const tenantId = "";
-  const entityId = "";
+// async function sendToPlRater(webhookData) {
+//   const productId = "";
+//   const tenantId = "";
+//   const entityId = "";
 
-  const vertaforeEndpoint = `https://api.apps.vertafore.com/rating/v1/${productId}/${tenantId}/entities/${entityId}/submit/import`;
+//   const vertaforeEndpoint = `https://api.apps.vertafore.com/rating/v1/${productId}/${tenantId}/entities/${entityId}/submit/import`;
 
-  // Make a POST request to Vertafore API using axios
-  const response = await axios.post(vertaforeEndpoint, webhookData);
-  return response;
-}
+//   // Make a POST request to Vertafore API using axios
+//   const response = await axios.post(vertaforeEndpoint, webhookData);
+//   return response;
+// }
 
 const port = process.env.PORT || 4000;
 app.listen(port, () => {
