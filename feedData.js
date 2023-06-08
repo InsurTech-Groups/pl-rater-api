@@ -49,17 +49,17 @@ async function handleWebhook(req, res) {
 
     console.log("Received webhook data:", webhookData);
 
-    const data = {
-      first_name: webhookData.first_name,
-      last_name: webhookData.last_name,
-      address: webhookData.address,
-      city: webhookData.city,
-      state: webhookData.state,
-      zip: webhookData.zipcode,
-    };
+    // const data = {
+    //   first_name: webhookData.first_name,
+    //   last_name: webhookData.last_name,
+    //   address: webhookData.address,
+    //   city: webhookData.city,
+    //   state: webhookData.state,
+    //   zip: webhookData.zipcode,
+    // };
 
     // STEP THREE: SENDING DATA TO VERTAFORE
-    const response = await sendToPlRater(webhookData);
+    //const response = await sendToPlRater(webhookData);
 
     console.log("Response from Vertafore:", response.data);
     res.status(200).json(response.data);
