@@ -6,7 +6,7 @@ const app = express();
 app.use(express.json());
 app.use(bodyParser.json());
 
-// STEP ONE: GETTING THE BEARER TOKEN FROM VERTAFORE
+//! STEP ONE: GETTING THE BEARER TOKEN FROM VERTAFORE
 
 app.get("/get-token", getToken);
 
@@ -39,7 +39,7 @@ async function getToken(req, res) {
   }
 }
 
-// STEP TWO: SETTING UP THE WEBHOOK ENDPOINT
+//! STEP TWO: SETTING UP THE WEBHOOK ENDPOINT
 
 app.post("/webhook", handleWebhook);
 
@@ -49,20 +49,22 @@ async function handleWebhook(req, res) {
 
     console.log("Received webhook data:", webhookData);
 
-    // const data = {
-    //   first_name: webhookData.first_name,
-    //   last_name: webhookData.last_name,
-    //   address: webhookData.address,
-    //   city: webhookData.city,
-    //   state: webhookData.state,
-    //   zip: webhookData.zipcode,
-    // };
+    const data = {
+      firstName: webhookData.firstName,
+      lastName: webhookData.lastName,
+      email: webhookData.email,
+      phone: webhookData.phone,
+      address: webhookData.address,
+      city: webhookData.city,
+      state: webhookData.state,
+      dob: webhookData.dob,
+      zip_code: webhookData.zip_code,
+    }
 
-    // STEP THREE: SENDING DATA TO VERTAFORE
-    //const response = await sendToPlRater(webhookData);
+    //! STEP THREE: SENDING DATA TO VERTAFORE
+    const response = await sendToPlRater(webhookData);
 
     //console.log("Response from Vertafore:", response.data);
-    
     res.status(200).json(response.data);
   } catch (error) {
     console.error("Error processing webhook:", error);
@@ -70,19 +72,19 @@ async function handleWebhook(req, res) {
   }
 }
 
-// STEP THREE: SENDING DATA TO VERTAFORE
+//! STEP THREE: SENDING DATA TO VERTAFORE
 
-// async function sendToPlRater(webhookData) {
-//   const productId = "";
-//   const tenantId = "";
-//   const entityId = "";
+async function sendToPlRater(webhookData) {
+  const productId = "RATING-API";
+  const tenantId = "3224063";
+  const entityId = "3224063";
 
-//   const vertaforeEndpoint = `https://api.apps.vertafore.com/rating/v1/${productId}/${tenantId}/entities/${entityId}/submit/import`;
+  const vertaforeEndpoint = `https://api.apps.vertafore.com/rating/v1/${productId}/${tenantId}/entities/${entityId}/submit/import`;
 
-//   // Make a POST request to Vertafore API using axios
-//   const response = await axios.post(vertaforeEndpoint, webhookData);
-//   return response;
-// }
+  // Make a POST request to Vertafore API using axios
+  const response = await axios.post(vertaforeEndpoint, webhookData);
+  return response;
+}
 
 const port = process.env.PORT || 4000;
 app.listen(port, () => {
