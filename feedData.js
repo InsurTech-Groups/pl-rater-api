@@ -10,7 +10,7 @@ app.get("/get-token", getToken);
 
 const mainData = {
 
-  'rico_id': '',
+
 
 }
 
@@ -64,9 +64,10 @@ async function handleWebhook(req, res) {
       state: webhookData.state,
       dob: webhookData.dob,
       zip_code: webhookData.zip_code,
+      lead_id: webhookData.lead_id,
     };
 
-    mainData.rico_id = webhookData.rico_id;
+    mainData.rico_id = lead_id;
 
     //! STEP THREE: SENDING DATA TO VERTAFORE
     //const response = await sendToPlRater(data);
@@ -96,7 +97,7 @@ async function sendToPlRater(webhookData) {
 
 //! Step Four: Sending Data to RICO with updated Data
 
-async function updateRicoLead(data) {
+async function updateRicoLead() {
   
   const leadId = mainData.rico_id;
   const field = 'pl_rater_link';
