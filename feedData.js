@@ -38,7 +38,7 @@ async function getToken(req, res) {
       expiresIn: response.data.content.expiresIn,
     };
     console.table(data);
-    res.status(200).json(data);
+    res.status(200).json(response.data);
   } catch (error) {
     console.error("Error getting bearer token:", error);
     res.status(500).json({ error: "Failed to get bearer token" });
