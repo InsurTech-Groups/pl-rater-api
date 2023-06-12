@@ -8,6 +8,12 @@ app.use(express.json());
 
 app.get("/get-token", getToken);
 
+const mainData = {
+
+  'rico_id': '',
+
+}
+
 async function getToken(req, res) {
   try {
     //! Token URL for DEV
@@ -60,8 +66,11 @@ async function handleWebhook(req, res) {
       zip_code: webhookData.zip_code,
     };
 
+    mainData.rico_id = webhookData.rico_id;
+
     //! STEP THREE: SENDING DATA TO VERTAFORE
-    const response = await sendToPlRater(data);
+    //const response = await sendToPlRater(data);
+    const response = await updateRicoLead(data);
 
     //console.log("Response from Vertafore:", response.data);
     res.status(200).json(response.data);
@@ -83,6 +92,28 @@ async function sendToPlRater(webhookData) {
   // Make a POST request to Vertafore API using axios
   const response = await axios.post(vertaforeEndpoint, webhookData);
   return response;
+}
+
+//! Step Four: Sending Data to RICO with updated Data
+
+async function updateRicoLead(data) {
+  
+  const leadId = mainData.rico_id;
+  const field = 'pl_rater_link';
+
+  const ricoEndpoint = `https://private-anon-4aa20412a2-ricochet.apiary-mock.com/api/v4/leads/externalupdate`;
+
+  const data = {
+    lead_id: leadId,
+    pl_rater_link: field,
+  }
+  
+  const response = await axios.post(ricoEndpoint, data);
+
+  console.log("Response from Ricochet:", response.data)
+  return response;
+
+
 }
 
 const port = process.env.PORT || 4000;
