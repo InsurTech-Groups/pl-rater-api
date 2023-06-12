@@ -100,10 +100,12 @@ async function updateRicoLead(data) {
   
   const leadId = mainData.rico_id;
   const field = 'pl_rater_link';
+  const ricoToken = 'ea527c772f0fe84238e916ff02f32ae8'
 
   const ricoEndpoint = `https://private-anon-4aa20412a2-ricochet.apiary-mock.com/api/v4/leads/externalupdate`;
 
   const data = {
+    token: ricoToken,
     stc_id: leadId,
     pl_rater_link: field,
   }
