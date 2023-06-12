@@ -104,7 +104,7 @@ async function updateRicoLead(data) {
   const ricoEndpoint = `https://private-anon-4aa20412a2-ricochet.apiary-mock.com/api/v4/leads/externalupdate`;
 
   const data = {
-    lead_id: leadId,
+    stc_id: leadId,
     pl_rater_link: field,
   }
   
