@@ -104,13 +104,13 @@ async function updateRicoLead(data) {
 
   const ricoEndpoint = `https://private-anon-4aa20412a2-ricochet.apiary-mock.com/api/v4/leads/externalupdate`;
 
-  const data = {
+  const ricoData = {
     token: ricoToken,
     stc_id: leadId,
     pl_rater_link: field,
   }
   
-  const response = await axios.post(ricoEndpoint, data);
+  const response = await axios.post(ricoEndpoint, ricoData);
 
   console.log("Response from Ricochet:", response.data)
   return response;
