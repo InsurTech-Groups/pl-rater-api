@@ -1,5 +1,6 @@
 const express = require("express");
 const axios = require("axios");
+const request = require("request");
 
 const app = express();
 app.use(express.json());
@@ -78,7 +79,6 @@ async function handleWebhook(req, res) {
 }
 
 
-
 //! Step Four: Sending Data to RICO with updated Data
 
 async function updateRicoLead() {
@@ -94,7 +94,29 @@ async function updateRicoLead() {
     pl_rater_link: field,
   };
 
-  const response = await axios.post(ricoEndpoint, ricoData);
+  console.log("Ricochet Data Sending:", ricoData)
+
+  request({
+    method: "POST",
+    url: ricoEndpoint,
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: ricoData,
+  }, function (error, response, body) {
+   
+    console.log('Status:', response.statusCode);
+    console.log('Headers:', JSON.stringify(response.headers));
+    console.log('Response:', body);
+
+    if (error) {
+      console.error('Error:', error);
+    }
+  })
+
+  //const response = await axios.post(ricoEndpoint, ricoData);
+
+
 
   console.log("Response from Ricochet:", response.data);
   return response;
