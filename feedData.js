@@ -91,6 +91,7 @@ async function updateRicoLead() {
     token: ricoToken,
     stc_id: leadId,
     pl_rater_link: field,
+    firstName: 'New Test Name'
   };
 
   console.log("Ricochet Data Sending:", ricoData)
