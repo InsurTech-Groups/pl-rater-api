@@ -32,7 +32,16 @@ async function getToken(req, res) {
       tokenType: response.data.content.tokenType,
       expiresIn: response.data.content.expiresIn,
     };
-    console.log(data);
+    
+    // add data into mainData object
+    mainData.requestId = data.requestId;
+    mainData.traceId = data.traceId;
+    mainData.spanId = data.spanId;
+    mainData.token = data.token;
+    mainData.tokenType = data.tokenType;
+    mainData.expiresIn = data.expiresIn;
+    
+
     res.status(200).json(response.data);
   } catch (error) {
     console.error("Error getting bearer token:", error);
@@ -66,8 +75,8 @@ async function handleWebhook(req, res) {
     mainData.rico_id = webhookData.lead_id;
 
     //! STEP THREE: SENDING DATA TO VERTAFORE
-    //const response = await sendToPlRater(data);
-    const response = await updateRicoLead(data);
+    const response = await sendToPlRater(data);
+    //const response = await updateRicoLead(data);
 
     //console.log("Response from Vertafore:", response.data);
     res.status(200).json(response.data);
@@ -77,6 +86,33 @@ async function handleWebhook(req, res) {
   }
 }
 
+
+async function sendToPlRater(data) {
+  
+  const productId = "RATING-API";
+  const tenantId = "3224063";
+  const entityId = "3224063";
+
+  const token = await getToken();
+  const data = data;
+  const accessToken = token.data.content.accessToken;
+
+
+  const vertaforeEndpoint = `https://api.apps.vertafore.com/rating/v1/${productId}/${tenantId}/entities/${entityId}/submit/import`;
+  const headers = {
+    Authorization: `Bearer ${accessToken}`,
+  }
+
+  try {
+    const response = await axios.post(vertaforeEndpoint, data, { headers });
+    console.log("Response from Vertafore:", response.data);
+    return response.data;
+  }
+  catch (error) {
+    console.error("Error:", error.response.data);
+    throw error;
+  }
+}
 
 //! Step Four: Sending Data to RICO with updated Data
 
@@ -88,7 +124,7 @@ async function updateRicoLead() {
   const ricoEndpoint = `https://private-anon-4aa20412a2-ricochet.apiary-mock.com/api/v4/leads/externalupdate`;
 
   const ricoData = {
-    'token': ricoToken,
+    'token': $`{ricoToken}`,
     'stc_id': leadId,
     'pl_rater_link': field,
     'firstName': 'New Test Name'
@@ -114,3 +150,18 @@ const port = process.env.PORT || 4000;
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
 });
+
+
+/* 
+git add -A
+
+git commit -m "updates"
+
+git push origin main
+
+git push heroku main
+
+*/
+
+
+// Add token to header Authorization: Bearer <token>
