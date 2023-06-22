@@ -94,7 +94,37 @@ async function sendToPlRater(data) {
   const entityId = "3224063";
 
   const token = await getToken();
-  const data = data;
+  const mainData = {
+    "unRatedLead": {
+      "applicationId": "VERTAFORE",
+      "lineOfBusiness": "PERSONAL_AUTO",
+      "partnerID": 3224063-1,
+      "leadSource": "leadSource",
+      "policy": {
+          "policyLob": "PERSONAL_AUTO",
+          "namedInsureds": [
+              {
+                  "id": 1,
+                  "name": {
+                      "familyName": data.lastName,
+                      "givenName": data.firstName
+                  },
+                  "relationshipToInsured": "SELF",
+                  "addresses": [
+                      {
+                          "streetAddress": data.address,
+                          "locality": data.city,
+                          "region": data.state,
+                          "postalCode": data.zip_code
+                      }
+                  ]
+              }
+          ],
+          "vehicles": []
+      },
+      "state": data.state
+  }
+  }
   const accessToken = token.data.content.accessToken;
 
 
@@ -104,7 +134,7 @@ async function sendToPlRater(data) {
   }
 
   try {
-    const response = await axios.post(vertaforeEndpoint, data, { headers });
+    const response = await axios.post(vertaforeEndpoint, mainData, { headers });
     console.log("Response from Vertafore:", response.data);
     return response.data;
   }
