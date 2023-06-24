@@ -97,7 +97,7 @@ async function sendToPlRater(data, req, res) {
   const entityId = "3224063";
 
   //run get token and get the return data
-  const token = await getToken(req, res);
+  const token = await getToken();
   const accessToken = token.data.content.accessToken;
   console.log("Access Token:", accessToken);
 
