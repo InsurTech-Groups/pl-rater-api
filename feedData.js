@@ -141,11 +141,9 @@ async function sendToPlRater(data, req, res) {
   }
   
   try {
-
     const response = await axios.post(vertaforeEndpoint, mainData, { headers });
     console.log("Response from Vertafore:", response.data);
     return response.data;
-
   } catch (error) {
     console.error("Error sending data to Vertafore:", error);
     throw new Error("Failed to send data to Vertafore");
