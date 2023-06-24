@@ -67,7 +67,7 @@ async function sendToPlRater(data) {
 
   console.log("Access token:", accessToken)
 
-  const mainData = {
+  const vertaforeData = {
     unRatedLead: {
       applicationId: "VERTAFORE",
       lineOfBusiness: "PERSONAL_AUTO",
@@ -105,7 +105,7 @@ async function sendToPlRater(data) {
   };
 
   try {
-    const response = await axios.post(vertaforeEndpoint, mainData, { headers });
+    const response = await axios.post(vertaforeEndpoint, vertaforeData, { headers });
     console.log("Response from Vertafore:", response.data);
     return response.data;
   } catch (error) {
