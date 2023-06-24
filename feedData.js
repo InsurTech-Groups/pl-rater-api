@@ -4,55 +4,8 @@ const axios = require("axios");
 const app = express();
 app.use(express.json());
 
-//! STEP ONE: GETTING THE BEARER TOKEN FROM VERTAFORE
 
-app.get("/get-token", getToken);
 
-const mainData = {};
-
-async function getToken(req, res) {
-  try {
-    const tokenEndpoint = "https://api.uat.titan.v4af.com/auth/v1/token";
-    const user = "InsurTechAPI";
-    const VID = "3224063";
-    const SC = "86265d5ebb5946ddb2e427781369593f";
-
-    const credentials = {
-      username: user,
-      password: SC,
-    };
-
-    const response = await axios.post(tokenEndpoint, credentials);
-    const data = {
-      requestId: response.data.requestId,
-      traceId: response.data.traceId,
-      spanId: response.data.spanId,
-      token: response.data.content ? response.data.content.accessToken : null,
-      tokenType: response.data.content ? response.data.content.tokenType : null,
-      expiresIn: response.data.content ? response.data.content.expiresIn : null,
-    };
-
-    if (response.data.content) {
-      // add data into mainData object
-      mainData.requestId = data.requestId;
-      mainData.traceId = data.traceId;
-      mainData.spanId = data.spanId;
-      mainData.token = data.token;
-      mainData.tokenType = data.tokenType;
-      mainData.expiresIn = data.expiresIn;
-    }
-
-    console.log("Token data:", data); // Add this line to log the token data
-
-    res.status(200).json(response.data);
-
-    // return the token to the sendToPlRater function
-    return data.token; // Return the token data instead of the response object
-  } catch (error) {
-    console.error("Error getting bearer token:", error);
-    res.status(500).json({ error: "Failed to get bearer token" });
-  }
-}
 
 //! STEP TWO: SETTING UP THE WEBHOOK ENDPOINT
 
@@ -97,8 +50,18 @@ async function sendToPlRater(data) {
   const partnerId = "3224063-1";
 
   // Run getToken separately to get the access token
-  const accessToken = await getToken();
-  console.log("Access Token:", accessToken);
+  const tokenEndpoint = "https://api.uat.titan.v4af.com/auth/v1/token";
+    const user = "InsurTechAPI";
+    const VID = "3224063";
+    const SC = "86265d5ebb5946ddb2e427781369593f";
+
+    const credentials = {
+      username: user,
+      password: SC,
+    };
+
+  const response = await axios.post(tokenEndpoint, credentials);
+  const accessToken = response.data.content.token;
 
   const mainData = {
     unRatedLead: {
