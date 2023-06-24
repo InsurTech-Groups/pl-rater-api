@@ -32,7 +32,7 @@ async function getToken(req, res) {
       tokenType: response.data.content.tokenType,
       expiresIn: response.data.content.expiresIn,
     };
-    
+
     // add data into mainData object
     mainData.requestId = data.requestId;
     mainData.traceId = data.traceId;
@@ -40,7 +40,6 @@ async function getToken(req, res) {
     mainData.token = data.token;
     mainData.tokenType = data.tokenType;
     mainData.expiresIn = data.expiresIn;
-    
 
     res.status(200).json(response.data);
 
@@ -63,8 +62,8 @@ async function handleWebhook(req, res) {
     console.log("Received webhook data:", webhookData);
 
     const data = {
-      firstName: webhookData.firstName,
-      lastName: webhookData.lastName,
+      firstName: webhookData.first_name,
+      lastName: webhookData.last_name,
       email: webhookData.email,
       phone: webhookData.phone,
       address: webhookData.address,
@@ -78,7 +77,7 @@ async function handleWebhook(req, res) {
     mainData.rico_id = webhookData.lead_id;
 
     //! STEP THREE: SENDING DATA TO VERTAFORE
-    const response = await sendToPlRater(data);
+    const response = await sendToPlRater(data, req, res);
     //const response = await updateRicoLead(data);
 
     //console.log("Response from Vertafore:", response.data);
@@ -89,105 +88,92 @@ async function handleWebhook(req, res) {
   }
 }
 
-
-async function sendToPlRater(data) {
-  
+async function sendToPlRater(data, req, res) {
   const productId = "RATING-API";
   const tenantId = "3224063";
   const entityId = "3224063";
 
-  //run get tokren and get the return data
-  const token = await getToken();
-  
+  //run get token and get the return data
+  const token = await getToken(req, res);
+
   const mainData = {
-    "unRatedLead": {
-      "applicationId": "VERTAFORE",
-      "lineOfBusiness": "PERSONAL_AUTO",
-      "partnerID": 3224063-1,
-      "leadSource": "leadSource",
-      "policy": {
-          "policyLob": "PERSONAL_AUTO",
-          "namedInsureds": [
+    unRatedLead: {
+      applicationId: "VERTAFORE",
+      lineOfBusiness: "PERSONAL_AUTO",
+      partnerID: "3224063-1",
+      leadSource: "leadSource",
+      policy: {
+        policyLob: "PERSONAL_AUTO",
+        namedInsureds: [
+          {
+            id: "3224063",
+            dob: data.dob,
+            gender: "M",
+            maritalStatus: "S",
+            firstName: data.firstName,
+            lastName: data.lastName,
+            address: {
+              addressLine1: data.address,
+              addressLine2: "",
+              city: data.city,
+              state: data.state,
+              postalCode: data.zip_code,
+            },
+            phoneNumbers: [
               {
-                  "id": 1,
-                  "name": {
-                      "familyName": data.lastName,
-                      "givenName": data.firstName
-                  },
-                  "relationshipToInsured": "SELF",
-                  "addresses": [
-                      {
-                          "streetAddress": data.address,
-                          "locality": data.city,
-                          "region": data.state,
-                          "postalCode": data.zip_code
-                      }
-                  ]
-              }
-          ],
-          "vehicles": []
+                phoneNumber: data.phone,
+                phoneType: "WORK",
+              },
+            ],
+            emailAddress: data.email,
+            commercialName: "individual",
+          },
+        ],
       },
-      "state": data.state
-  }
-  }
-  const accessToken = token.data.content.accessToken;
-
-
-  const vertaforeEndpoint = `https://api.apps.vertafore.com/rating/v1/${productId}/${tenantId}/entities/${entityId}/submit/import`;
-  const headers = {
-    Authorization: `Bearer ${accessToken}`,
-  }
-
-  try {
-    const response = await axios.post(vertaforeEndpoint, mainData, { headers });
-    console.log("Response from Vertafore:", response.data);
-    return response.data;
-  }
-  catch (error) {
-    console.error("Error:", error.response.data);
-    throw error;
-  }
-}
-
-//! Step Four: Sending Data to RICO with updated Data
-
-async function updateRicoLead() {
-  const leadId = mainData.rico_id;
-  const field = "pl_rater_link";
-  const ricoToken = "ea527c772f0fe84238e916ff02f32ae8";
-
-  const ricoEndpoint = `https://private-anon-4aa20412a2-ricochet.apiary-mock.com/api/v4/leads/externalupdate`;
-
-  const ricoData = {
-    'token': $`{ricoToken}`,
-    'stc_id': leadId,
-    'pl_rater_link': field,
-    'firstName': 'New Test Name'
+      suppressProducerMatch: false,
+      suppressPriorData: false,
+      suppressPriorPremium: false,
+      suppressPriorLosses: false,
+      suppressPriorViolations: false,
+      userId: "3224063",
+      vin: "",
+      vehicleYear: "",
+      vehicleMake: "",
+      vehicleModel: "",
+    },
+    productId: productId,
+    tenantId: tenantId,
+    entityId: entityId,
+    useMasterLog: true,
+    isTest: true,
+    token: token.token, // pass the token received from getToken
+    tokenType: token.tokenType, // pass the token type received from getToken
   };
 
-  console.log("Ricochet Data Sending:", ricoData)
-
   try {
-    const response = await axios.post(ricoEndpoint, ricoData);
-    console.log("Response from Ricochet:", response.data);
-    return response.data;
+    const response = await axios.post(
+      "https://api.uat.titan.v4af.com/titan-rating/rating/v1/unRatedLead",
+      mainData
+    );
+
+    // Perform necessary actions with the response
+    // ...
+
+    return response;
   } catch (error) {
-    console.error("Error:", error.response.data);
-    throw error;
+    console.error("Error sending data to Vertafore:", error);
+    throw new Error("Failed to send data to Vertafore");
   }
-
-
-  console.log("Response from Ricochet:", response.data);
-  return response;
 }
 
-const port = process.env.PORT || 4000;
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
-  console.log(`Server listening on port ${port}`);
+  console.log(`Server is running on port ${port}`);
 });
 
 
-/* 
+/*
+
 git add -A
 
 git commit -m "updates"
@@ -196,7 +182,5 @@ git push origin main
 
 git push heroku main
 
-*/
 
-
-// Add token to header Authorization: Bearer <token>
+*/ 
