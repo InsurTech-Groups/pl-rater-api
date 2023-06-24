@@ -1,0 +1,29 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Git Add",
+      "type": "shell",
+      "command": "git add -A",
+      "problemMatcher": []
+    },
+    {
+      "label": "Git Commit",
+      "type": "shell",
+      "command": "git commit -m \"updates\"",
+      "problemMatcher": []
+    },
+    {
+      "label": "Git Push Origin",
+      "type": "shell",
+      "command": "git push origin main",
+      "problemMatcher": []
+    },
+    {
+      "label": "Git Push Heroku",
+      "type": "shell",
+      "command": "git push heroku main",
+      "problemMatcher": []
+    }
+  ]
+}
