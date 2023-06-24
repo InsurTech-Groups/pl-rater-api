@@ -79,7 +79,7 @@ async function handleWebhook(req, res) {
     mainData.rico_id = webhookData.lead_id;
 
     //! STEP THREE: SENDING DATA TO VERTAFORE
-    const response = await sendToPlRater(data, req, res);
+    const response = await sendToPlRater(data);
     //const response = await updateRicoLead(data);
 
     //console.log("Response from Vertafore:", response.data);
@@ -90,6 +90,7 @@ async function handleWebhook(req, res) {
   }
 }
 
+
 async function sendToPlRater(data, req, res) {
   const productId = "RATING-API";
   const tenantId = "3224063";
@@ -97,8 +98,8 @@ async function sendToPlRater(data, req, res) {
 
   //run get token and get the return data
   const token = await getToken(req, res);
-  //get the token from the return data
-  
+  const accessToken = token.data.content.accessToken;
+  console.log("Access Token:", accessToken);
 
   const mainData = {
     "unRatedLead": {
@@ -132,7 +133,7 @@ async function sendToPlRater(data, req, res) {
   }
   };
 
-  const accessToken = token.data.content.accessToken;
+
 
 
   const vertaforeEndpoint = `https://api.apps.vertafore.com/rating/v1/${productId}/${tenantId}/entities/${entityId}/submit/import`;
