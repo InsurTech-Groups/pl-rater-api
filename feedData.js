@@ -64,6 +64,8 @@ async function sendToPlRater(data) {
   const response = await axios.post(tokenEndpoint, credentials);
   const accessToken = response.data.content.token;
 
+  console.log("Access token:", accessToken)
+
   const mainData = {
     unRatedLead: {
       applicationId: "VERTAFORE",
@@ -98,7 +100,7 @@ async function sendToPlRater(data) {
 
   const vertaforeEndpoint = `https://api.apps.vertafore.com/rating/v1/${productId}/${tenantId}/entities/${entityId}/submit/import`;
   const headers = {
-    Authorization: `Bearer ${accessToken}`,
+    'Authorization': `Bearer ${accessToken}`,
   };
 
   try {
