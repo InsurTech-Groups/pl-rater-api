@@ -4,26 +4,71 @@
     {
       "label": "Git Add",
       "type": "shell",
-      "command": "git add -A",
-      "problemMatcher": []
+      "command": "git",
+      "args": [
+        "add",
+        "-A"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
     },
     {
       "label": "Git Commit",
       "type": "shell",
-      "command": "git commit -m \"updates\"",
-      "problemMatcher": []
+      "command": "git",
+      "args": [
+        "commit",
+        "-m",
+        "updates"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
     },
     {
       "label": "Git Push Origin",
       "type": "shell",
-      "command": "git push origin main",
-      "problemMatcher": []
+      "command": "git",
+      "args": [
+        "push",
+        "origin",
+        "main"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
     },
     {
       "label": "Git Push Heroku",
       "type": "shell",
-      "command": "git push heroku main",
-      "problemMatcher": []
+      "command": "git",
+      "args": [
+        "push",
+        "heroku",
+        "main"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "Custom Git Commands",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "Git Add",
+        "Git Commit",
+        "Git Push Origin",
+        "Git Push Heroku"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
     }
   ]
 }

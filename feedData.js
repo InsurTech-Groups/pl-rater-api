@@ -51,7 +51,7 @@ async function getToken(req, res) {
     res.status(200).json(response.data);
     
     // return the token to the sendToPlRater function
-    return data; // Return the token data instead of the response object
+    return data.token; // Return the token data instead of the response object
   } catch (error) {
     console.error("Error getting bearer token:", error);
     res.status(500).json({ error: "Failed to get bearer token" });
@@ -106,6 +106,8 @@ async function sendToPlRater(data, req, res) {
   //run get token and get the return data
   const accessToken = await getToken();
   console.log("Access Token:", accessToken);
+
+  console.info(accessToken)
 
   const mainData = {
     "unRatedLead": {
