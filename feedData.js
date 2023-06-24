@@ -43,6 +43,9 @@ async function getToken(req, res) {
     
 
     res.status(200).json(response.data);
+
+    //return the token to the sendToPlRater function
+    return response.data;
   } catch (error) {
     console.error("Error getting bearer token:", error);
     res.status(500).json({ error: "Failed to get bearer token" });
@@ -93,7 +96,9 @@ async function sendToPlRater(data) {
   const tenantId = "3224063";
   const entityId = "3224063";
 
+  //run get tokren and get the return data
   const token = await getToken();
+  
   const mainData = {
     "unRatedLead": {
       "applicationId": "VERTAFORE",
