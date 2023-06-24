@@ -63,7 +63,7 @@ async function sendToPlRater(data) {
 
   const response = await axios.post(tokenEndpoint, credentials);
   console.log("Response from Vertafore:", response.data)
-  const accessToken = response.data.content.token;
+  const accessToken = response.data.content.accessToken;
 
   console.log("Access token:", accessToken)
 
