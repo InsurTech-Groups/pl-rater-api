@@ -28,22 +28,24 @@ async function getToken(req, res) {
       requestId: response.data.requestId,
       traceId: response.data.traceId,
       spanId: response.data.spanId,
-      token: response.data.content.accessToken,
-      tokenType: response.data.content.tokenType,
-      expiresIn: response.data.content.expiresIn,
+      token: response.data.content ? response.data.content.accessToken : null,
+      tokenType: response.data.content ? response.data.content.tokenType : null,
+      expiresIn: response.data.content ? response.data.content.expiresIn : null,
     };
-
-    // add data into mainData object
-    mainData.requestId = data.requestId;
-    mainData.traceId = data.traceId;
-    mainData.spanId = data.spanId;
-    mainData.token = data.token;
-    mainData.tokenType = data.tokenType;
-    mainData.expiresIn = data.expiresIn;
-
+    
+    if (response.data.content) {
+      // add data into mainData object
+      mainData.requestId = data.requestId;
+      mainData.traceId = data.traceId;
+      mainData.spanId = data.spanId;
+      mainData.token = data.token;
+      mainData.tokenType = data.tokenType;
+      mainData.expiresIn = data.expiresIn;
+    }
+    
     res.status(200).json(response.data);
-
-    //return the token to the sendToPlRater function
+    
+    // return the token to the sendToPlRater function
     return response.data;
   } catch (error) {
     console.error("Error getting bearer token:", error);
@@ -95,6 +97,8 @@ async function sendToPlRater(data, req, res) {
 
   //run get token and get the return data
   const token = await getToken(req, res);
+  //get the token from the return data
+  
 
   const mainData = {
     "unRatedLead": {
@@ -141,7 +145,7 @@ async function sendToPlRater(data, req, res) {
     const response = await axios.post(vertaforeEndpoint, mainData, { headers });
     console.log("Response from Vertafore:", response.data);
     return response.data;
-    
+
   } catch (error) {
     console.error("Error sending data to Vertafore:", error);
     throw new Error("Failed to send data to Vertafore");
