@@ -5,6 +5,7 @@ const app = express();
 app.use(express.json());
 
 
+mainData = {}
 
 
 //! STEP TWO: SETTING UP THE WEBHOOK ENDPOINT
