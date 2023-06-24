@@ -9,30 +9,10 @@ app.use(express.json());
 app.get("/get-token", getToken);
 
 const mainData = {};
-
 async function getToken(req, res) {
   try {
-    //! Token URL for DEV
-    const tokenEndpoint = "https://api.uat.titan.v4af.com/auth/v1/token";
-    const user = "InsurTechAPI";
-    const VID = "3224063";
-    const SC = "86265d5ebb5946ddb2e427781369593f";
+    // ...existing code...
 
-    const credentials = {
-      username: user,
-      password: SC,
-    };
-
-    const response = await axios.post(tokenEndpoint, credentials);
-    const data = {
-      requestId: response.data.requestId,
-      traceId: response.data.traceId,
-      spanId: response.data.spanId,
-      token: response.data.content ? response.data.content.accessToken : null,
-      tokenType: response.data.content ? response.data.content.tokenType : null,
-      expiresIn: response.data.content ? response.data.content.expiresIn : null,
-    };
-    
     if (response.data.content) {
       // add data into mainData object
       mainData.requestId = data.requestId;
@@ -42,16 +22,19 @@ async function getToken(req, res) {
       mainData.tokenType = data.tokenType;
       mainData.expiresIn = data.expiresIn;
     }
-    
+
+    console.log("Token data:", data); // Add this line to log the token data
+
     res.status(200).json(response.data);
     
     // return the token to the sendToPlRater function
-    return response.data;
+    return data; // Return the token data instead of the response object
   } catch (error) {
     console.error("Error getting bearer token:", error);
     res.status(500).json({ error: "Failed to get bearer token" });
   }
 }
+
 
 //! STEP TWO: SETTING UP THE WEBHOOK ENDPOINT
 
