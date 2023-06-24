@@ -97,69 +97,51 @@ async function sendToPlRater(data, req, res) {
   const token = await getToken(req, res);
 
   const mainData = {
-    unRatedLead: {
-      applicationId: "VERTAFORE",
-      lineOfBusiness: "PERSONAL_AUTO",
-      partnerID: "3224063-1",
-      leadSource: "leadSource",
-      policy: {
-        policyLob: "PERSONAL_AUTO",
-        namedInsureds: [
-          {
-            id: "3224063",
-            dob: data.dob,
-            gender: "M",
-            maritalStatus: "S",
-            firstName: data.firstName,
-            lastName: data.lastName,
-            address: {
-              addressLine1: data.address,
-              addressLine2: "",
-              city: data.city,
-              state: data.state,
-              postalCode: data.zip_code,
-            },
-            phoneNumbers: [
+    "unRatedLead": {
+      "applicationId": "VERTAFORE",
+      "lineOfBusiness": "PERSONAL_AUTO",
+      "partnerID": 3224063-1,
+      "leadSource": "leadSource",
+      "policy": {
+          "policyLob": "PERSONAL_AUTO",
+          "namedInsureds": [
               {
-                phoneNumber: data.phone,
-                phoneType: "WORK",
-              },
-            ],
-            emailAddress: data.email,
-            commercialName: "individual",
-          },
-        ],
+                  "id": 1,
+                  "name": {
+                      "familyName": data.lastName,
+                      "givenName": data.firstName
+                  },
+                  "relationshipToInsured": "SELF",
+                  "addresses": [
+                      {
+                          "streetAddress": data.address,
+                          "locality": data.city,
+                          "region": data.state,
+                          "postalCode": data.zip_code
+                      }
+                  ]
+              }
+          ],
+          "vehicles": []
       },
-      suppressProducerMatch: false,
-      suppressPriorData: false,
-      suppressPriorPremium: false,
-      suppressPriorLosses: false,
-      suppressPriorViolations: false,
-      userId: "3224063",
-      vin: "",
-      vehicleYear: "",
-      vehicleMake: "",
-      vehicleModel: "",
-    },
-    productId: productId,
-    tenantId: tenantId,
-    entityId: entityId,
-    useMasterLog: true,
-    isTest: true,
-    token: token.token, // pass the token received from getToken
-    tokenType: token.tokenType, // pass the token type received from getToken
+      "state": data.state
+  }
   };
 
+  const accessToken = token.data.content.accessToken;
+
+
+  const vertaforeEndpoint = `https://api.apps.vertafore.com/rating/v1/${productId}/${tenantId}/entities/${entityId}/submit/import`;
+  const headers = {
+    Authorization: `Bearer ${accessToken}`,
+  }
+  
   try {
-    const response = await axios.post(
-      "https://api.uat.titan.v4af.com/titan-rating/rating/v1/unRatedLead",
-      mainData
-    );
 
-    // Perform necessary actions with the response
-    // ...
-
-    return response;
+    const response = await axios.post(vertaforeEndpoint, mainData, { headers });
+    console.log("Response from Vertafore:", response.data);
+    return response.data;
+    
   } catch (error) {
     console.error("Error sending data to Vertafore:", error);
     throw new Error("Failed to send data to Vertafore");
