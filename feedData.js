@@ -110,7 +110,7 @@ async function sendToPlRater(data) {
     return response.data;
   } catch (error) {
     console.error("Error sending data to Vertafore:", error);
-    throw new Error("Failed to send data to Vertafore");
+    throw new Error("Failed to send data to Vertafore", error);
   }
 }
 
