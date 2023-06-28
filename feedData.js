@@ -68,36 +68,38 @@ async function sendToPlRater(data) {
   console.log("Access token:", accessToken)
 
   const vertaforeData = {
-    unRatedLead: {
-      applicationId: "VERTAFORE",
-      lineOfBusiness: "PERSONAL_AUTO",
-      partnerID: partnerId,
-      leadSource: "leadSource",
-      policy: {
-        policyLob: "PERSONAL_AUTO",
-        namedInsureds: [
+    "unRatedLead": {
+      "applicationId": "VERTAFORE",
+      "lineOfBusiness": "PERSONAL_AUTO",
+      "partnerID": partnerId,
+      "leadSource": "leadSource",
+     " policy": {
+        "policyLob": "PERSONAL_AUTO",
+        "namedInsureds": [
           {
-            id: 1,
-            name: {
-              familyName: data.lastName,
-              givenName: data.firstName,
+            "id": 1,
+            "name": {
+              "familyName": data.lastName,
+              "givenName": data.firstName,
             },
-            relationshipToInsured: "SELF",
-            addresses: [
+            "relationshipToInsured": "SELF",
+            "addresses": [
               {
-                streetAddress: data.address,
-                locality: data.city,
-                region: data.state,
-                postalCode: data.zip_code,
+                "streetAddress": data.address,
+                "locality": data.city,
+                "region": data.state,
+                "postalCode": data.zip_code,
               },
             ],
           },
         ],
-        vehicles: [],
+        "vehicles": [],
       },
-      state: data.state,
+      "state": data.state,
     },
   };
+
+  
 
   const vertaforeEndpoint = `https://api.apps.vertafore.com/rating/v1/${productId}/${tenantId}/entities/${entityId}/submit/import`;
   const headers = {
