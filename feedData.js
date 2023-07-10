@@ -34,7 +34,8 @@ async function handleWebhook(req, res) {
     mainData.rico_id = webhookData.lead_id;
 
     //! STEP THREE: SENDING DATA TO VERTAFORE
-    const response = await sendToPlRater(data);
+    //const response = await sendToPlRater(data);
+    const response = await updateRicoLead()
 
     //console.log("Response from Vertafore:", response.data);
     res.status(200).json(response.data);
@@ -107,13 +108,41 @@ async function sendToPlRater(data) {
   };
 
   try {
-    const response = await axios.post(vertaforeEndpoint, vertaforeData, { headers });
+
+    //! uncomment below to send to pl rater
+    //const response = await axios.post(vertaforeEndpoint, vertaforeData, { headers });
     console.log("Response from Vertafore:", response.data);
     return response.data;
   } catch (error) {
     console.error("Error sending data to Vertafore:", error);
     throw new Error("Failed to send data to Vertafore", error);
   }
+}
+
+async function updateRicoLead() {
+  const leadId = mainData.rico_id;
+  const field = "pl_rater_link";
+  const ricoToken = "ea527c772f0fe84238e916ff02f32ae8";
+
+  const ricoEndpoint = `https://private-anon-4aa20412a2-ricochet.apiary-mock.com/api/v4/leads/externalupdate`;
+
+  const ricoData = {
+    'token':  `${ricoToken}`,
+    'stc_id': leadId,
+    'pl_rater_link': field,
+  };
+
+  console.log("Ricochet Data Sending:", ricoData)
+
+  try {
+    const response = await axios.post(ricoEndpoint, ricoData);
+    console.log("Response from Ricochet:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error:", error.response.data);
+    throw error;
+  }
+
 }
 
 const port = process.env.PORT || 3000;
