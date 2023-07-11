@@ -122,9 +122,9 @@ async function sendToPlRater(data) {
 async function updateRicoLead() {
   const leadId = mainData.rico_id;
   const field = "pl_rater_link";
-  const ricoToken = "ea527c772f0fe84238e916ff02f32ae8";
+  const ricoToken = "7906ed0b1d70d1d0b2b3a03366aeb763bV247H6YBhzgO8YCiClakkhKJPIu";
 
-  const ricoEndpoint = `https://private-anon-4aa20412a2-ricochet.apiary-mock.com/api/v4/leads/externalupdate`;
+  const ricoEndpoint = `https://r2.ricochet.me/api/v4/leads/externalupdate`;
 
   const ricoData = {
     'token':  `${ricoToken}`,
