@@ -52,7 +52,8 @@ async function handleWebhook(req, res) {
 
 
     //! STEP THREE: SENDING DATA TO VERTAFORE
-    const response = await sendToPlRater(data);
+    //const response = await sendToPlRater(data);
+    const response = await updateRicoLead();
 
     //console.log("Response from Vertafore:", response.data);
     res.status(200).json(response.data);
