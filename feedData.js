@@ -1,8 +1,23 @@
 const express = require("express");
 const axios = require("axios");
+const Bugsnag = require('@bugsnag/js')
+const BugsnagPluginExpress = require('@bugsnag/plugin-express')
+
+Bugsnag.start({
+
+  apiKey: 'a737263a4c55aeaf0eb5944f057647f1',
+  plugins: [BugsnagPluginExpress]
+
+})
+
 
 const app = express();
+const middleware = Bugsnag.getPlugin('express');
+app.use(middleware.requestHandler);
 app.use(express.json());
+app.use(middleware.errorHandler)
+
+
 
 
 mainData = {}
@@ -33,9 +48,11 @@ async function handleWebhook(req, res) {
 
     mainData.rico_id = webhookData.lead_id;
 
+    Bugsnag.notify(new Error('Test error'))
+
+
     //! STEP THREE: SENDING DATA TO VERTAFORE
-    //const response = await sendToPlRater(data);
-    const response = await updateRicoLead()
+    const response = await sendToPlRater(data);
 
     //console.log("Response from Vertafore:", response.data);
     res.status(200).json(response.data);
@@ -109,10 +126,16 @@ async function sendToPlRater(data) {
 
   try {
 
-    //! uncomment below to send to pl rater
-    //const response = await axios.post(vertaforeEndpoint, vertaforeData, { headers });
+    const response = await axios.post(vertaforeEndpoint, vertaforeData, { headers });
     console.log("Response from Vertafore:", response.data);
-    return response.data;
+
+    if (response.status === 200) {
+      console.log("Vertafore data sent successfully");
+      console.log('Response from Vertafore:', response.data);
+      updateRicoLead();
+    }
+
+
   } catch (error) {
     console.error("Error sending data to Vertafore:", error);
     throw new Error("Failed to send data to Vertafore", error);
