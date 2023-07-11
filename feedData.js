@@ -48,17 +48,22 @@ async function handleWebhook(req, res) {
 
     mainData.rico_id = webhookData.lead_id;
 
-    Bugsnag.notify(new Error('Test error'))
 
 
     //! STEP THREE: SENDING DATA TO VERTAFORE
-    //const response = await sendToPlRater(data);
-    const response = await updateRicoLead();
+    const response = await sendToPlRater(data);
 
     //console.log("Response from Vertafore:", response.data);
     res.status(200).json(response.data);
   } catch (error) {
     console.error("Error processing webhook:", error);
+    Bugsnag.notify(error, {
+      request: req,
+      response: res,
+      webhookData: req.body,
+      lead_id: mainData.rico_id,
+    });
+
     res.status(500).json({ error: "Failed to process webhook" });
   }
 }
@@ -139,6 +144,10 @@ async function sendToPlRater(data) {
 
   } catch (error) {
     console.error("Error sending data to Vertafore:", error);
+    Bugsnag.notify(error, {
+      data: vertaforeData,
+      headers: headers,
+    });
     throw new Error("Failed to send data to Vertafore", error);
   }
 }
@@ -164,6 +173,10 @@ async function updateRicoLead() {
     return response.data;
   } catch (error) {
     console.error("Error:", error.response.data);
+    Bugsnag.notify(error, {
+      data: ricoData,
+      endpoint: ricoEndpoint,
+    });
     throw error;
   }
 
